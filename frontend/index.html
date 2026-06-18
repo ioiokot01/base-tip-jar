@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TipJar · Base</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>🫙 TipJar</h1>
+        <p class="subtitle">Send a tip on Base. Climb the leaderboard.</p>
+        <button id="connectBtn" class="btn">Connect Wallet</button>
+        <p id="account" class="account hidden"></p>
+      </header>
+
+      <section class="stats">
+        <div class="stat">
+          <span class="stat-label">Total tipped</span>
+          <span id="totalTips" class="stat-value">— ETH</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">In the jar</span>
+          <span id="balance" class="stat-value">— ETH</span>
+        </div>
+      </section>
+
+      <section class="compose">
+        <div class="amount-row">
+          <input
+            id="amountInput"
+            type="number"
+            min="0"
+            step="0.0001"
+            placeholder="0.001"
+            disabled
+          />
+          <span class="suffix">ETH</span>
+        </div>
+        <textarea
+          id="messageInput"
+          maxlength="280"
+          placeholder="Say something nice (optional)…"
+          disabled
+        ></textarea>
+        <div class="compose-row">
+          <span id="charCount" class="char-count">0 / 280</span>
+          <button id="tipBtn" class="btn" disabled>Send Tip 💸</button>
+        </div>
+      </section>
+
+      <p id="status" class="status"></p>
+
+      <section class="board">
+        <h2>🏆 Leaderboard</h2>
+        <ol id="leaderboard" class="leaderboard"></ol>
+        <p id="emptyBoard" class="empty">No tips yet — be the first!</p>
+      </section>
+
+      <section class="feed">
+        <div class="feed-head">
+          <h2>Recent tips</h2>
+          <button id="refreshBtn" class="btn btn-ghost" disabled>Refresh</button>
+        </div>
+        <ul id="tips" class="tips"></ul>
+      </section>
+
+      <section id="ownerPanel" class="owner-panel hidden">
+        <h2>Owner</h2>
+        <p class="muted">You deployed this jar. Withdraw the balance:</p>
+        <button id="withdrawBtn" class="btn btn-warn">Withdraw all</button>
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

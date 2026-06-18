@@ -41,8 +41,14 @@ Emits `Tipped` on each tip and `Withdrawn` on withdrawal.
 ## Roadmap
 
 - [x] TipJar contract + tests
-- [ ] Deploy to Base Sepolia
-- [ ] Frontend (tip with message, live leaderboard, owner withdraw)
+- [x] Deploy to Base Sepolia
+- [x] Frontend (tip with message, live leaderboard, owner withdraw)
+
+## Deployments
+
+| Network | Address |
+| --- | --- |
+| Base Sepolia | [`0x8f593359eF9F6152d993f0A2C23546872096E407`](https://sepolia.basescan.org/address/0x8f593359eF9F6152d993f0A2C23546872096E407) |
 
 ## Security notes
 
