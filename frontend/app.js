@@ -25,6 +25,9 @@ let provider;
 let signer;
 let contract;
 let account;
+let allTips = []; // last loaded tips
+let scope = "all"; // "all" | "mine"
+let sortOrder = "newest"; // "newest" | "oldest"
 
 const els = {
   connectBtn: document.getElementById("connectBtn"),
@@ -42,6 +45,8 @@ const els = {
   tips: document.getElementById("tips"),
   ownerPanel: document.getElementById("ownerPanel"),
   withdrawBtn: document.getElementById("withdrawBtn"),
+  tipControls: document.getElementById("tipControls"),
+  emptyTips: document.getElementById("emptyTips"),
 };
 
 // ---------------------------------------------------------------------------
@@ -91,6 +96,7 @@ async function connect() {
     els.messageInput.disabled = false;
     els.tipBtn.disabled = false;
     els.refreshBtn.disabled = false;
+    els.tipControls.classList.remove("hidden");
 
     await refresh();
     contract.on("Tipped", () => refresh());
@@ -119,7 +125,8 @@ async function refresh() {
     els.balance.textContent = fmtEth(balance) + " ETH";
 
     renderLeaderboard(board.addrs, board.amounts);
-    renderTips(tips);
+    allTips = tips;
+    renderTips();
 
     // Show owner panel only to the owner.
     if (owner.toLowerCase() === account) {
@@ -161,9 +168,25 @@ function renderLeaderboard(addrs, amounts) {
   });
 }
 
-function renderTips(tips) {
+function renderTips() {
   els.tips.innerHTML = "";
-  [...tips].reverse().forEach((tip) => {
+
+  // Filter by scope, then order. allTips is in chain (oldest-first) order.
+  let rows = allTips.map((tip, i) => ({ tip, i }));
+  if (scope === "mine") {
+    rows = rows.filter(({ tip }) => tip.tipper.toLowerCase() === account);
+  }
+  rows.sort((a, b) => (sortOrder === "newest" ? b.i - a.i : a.i - b.i));
+
+  if (rows.length === 0) {
+    els.emptyTips.textContent =
+      scope === "mine" ? "You haven't tipped yet." : "No tips yet.";
+    els.emptyTips.classList.remove("hidden");
+    return;
+  }
+  els.emptyTips.classList.add("hidden");
+
+  rows.forEach(({ tip }) => {
     const li = document.createElement("li");
     li.className = "tip-item";
 
@@ -254,6 +277,19 @@ els.tipBtn.addEventListener("click", sendTip);
 els.refreshBtn.addEventListener("click", refresh);
 els.withdrawBtn.addEventListener("click", withdraw);
 els.messageInput.addEventListener("input", updateCharCount);
+
+// Tip feed scope (all/mine) and sort (newest/oldest) — re-render without refetch.
+els.tipControls.querySelectorAll(".seg-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.scope) scope = btn.dataset.scope;
+    if (btn.dataset.sort) sortOrder = btn.dataset.sort;
+    // Toggle active state within the button's own segment group.
+    btn.parentElement
+      .querySelectorAll(".seg-btn")
+      .forEach((b) => b.classList.toggle("active", b === btn));
+    renderTips();
+  });
+});
 
 if (window.ethereum) {
   window.ethereum.on?.("accountsChanged", () => window.location.reload());

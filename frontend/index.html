@@ -63,7 +63,18 @@
           <h2>Recent tips</h2>
           <button id="refreshBtn" class="btn btn-ghost" disabled>Refresh</button>
         </div>
+        <div id="tipControls" class="tip-controls hidden">
+          <div class="seg">
+            <button class="seg-btn active" data-scope="all">All</button>
+            <button class="seg-btn" data-scope="mine">Mine</button>
+          </div>
+          <div class="seg">
+            <button class="seg-btn active" data-sort="newest">Newest</button>
+            <button class="seg-btn" data-sort="oldest">Oldest</button>
+          </div>
+        </div>
         <ul id="tips" class="tips"></ul>
+        <p id="emptyTips" class="empty hidden">No tips to show.</p>
       </section>
 
       <section id="ownerPanel" class="owner-panel hidden">
