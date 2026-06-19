@@ -120,4 +120,38 @@ describe("TipJar", function () {
       "TipJar: nothing to withdraw"
     );
   });
+
+  it("accepts an empty message (message is optional)", async function () {
+    await expect(
+      tipJar.connect(alice).tip("", { value: ethers.parseEther("0.1") })
+    ).to.emit(tipJar, "Tipped");
+    expect((await tipJar.getTips())[0].message).to.equal("");
+  });
+
+  it("accepts a message of exactly the max length", async function () {
+    const max = "x".repeat(280);
+    await expect(
+      tipJar.connect(alice).tip(max, { value: ethers.parseEther("0.1") })
+    ).to.emit(tipJar, "Tipped");
+  });
+
+  it("lets the owner withdraw again after new tips arrive", async function () {
+    await tipJar.connect(alice).tip("first", { value: ethers.parseEther("1") });
+    await tipJar.connect(owner).withdraw();
+
+    await tipJar.connect(bob).tip("second", { value: ethers.parseEther("2") });
+    await expect(tipJar.connect(owner).withdraw()).to.changeEtherBalance(
+      owner,
+      ethers.parseEther("2")
+    );
+    expect(await tipJar.contractBalance()).to.equal(0n);
+  });
+
+  it("totals the balance across different tippers", async function () {
+    await tipJar.connect(alice).tip("a", { value: ethers.parseEther("0.3") });
+    await tipJar.connect(bob).tip("b", { value: ethers.parseEther("0.7") });
+    expect(await tipJar.contractBalance()).to.equal(ethers.parseEther("1"));
+    expect(await tipJar.totalTips()).to.equal(ethers.parseEther("1"));
+    expect(await tipJar.tipsCount()).to.equal(2n);
+  });
 });
